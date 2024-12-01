@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow Book</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('images/bg_books.jpg') no-repeat center center/cover; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    z-index: 100;
+}
+
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header-logo h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffc107;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-buttons button {
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease, text-decoration 0.3s ease;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.nav-buttons button:hover {
+    transform: scale(1.1);
+    color: #ffc107;
+}
+
+.nav-buttons button::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;  
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #fff;
+    visibility: hidden;
+}
+
+.nav-buttons button:hover::after {
+    visibility: visible;
+}
+
+.nav-buttons i {
+    font-size: 20px;
+}
+
+
+.nav-buttons button i {
+    opacity: 0.8;
+}
+
+.nav-buttons button:hover i {
+    opacity: 1;
+}
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 100px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            width: 100%;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            width: 100%;
+        }
+
+        label {
+            font-weight: 500;
+            margin: 10px 0 5px 0;
+            display: flex;
+            align-items: center;
+            color: #fff;
+            justify-content: center; 
+        }
+
+        label svg {
+            margin-right: 8px;
+            width: 20px;
+            height: 20px;
+            fill: #ffc107;
+        }
+
+        select {
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            width: 100%; 
+            max-width: 350px; 
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        button.submit-btn {
+            margin: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: rgba(255, 193, 7, 0.8);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button.submit-btn:hover {
+            background-color: rgba(255, 193, 7, 1);
+            transform: translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                max-width: 90%;
+            }
+
+            .form-section {
+                width: 100%;
+            }
+
+            .nav-buttons {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            form {
+                flex-direction: column;
+            }
+
+            .form-section {
+                width: 100%;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="header">
+    <div class="header-logo">
+        <img src="images/swlogo.png" alt="ShelfWise Logo"> 
+        <h2>ShelfWise!</h2>
+    </div>
+    <div class="nav-buttons">
+        <button id="addBookBtn" title="Add Book">
+            <i class="fa fa-plus"></i>
+        </button>
+        <button id="viewBookBtn" title="View Books">
+            <i class="fa fa-book"></i>
+        </button>
+        <button id="addAuthorBtn" title="Add Author">
+            <i class="fa fa-user-plus"></i>
+        </button>
+        <button id="viewAuthorBtn" title="View Authors">
+            <i class="fa fa-users"></i>
+        </button>
+        <button id="borrowBookBtn" title="Borrow Book">
+            <i class="fa fa-book-reader"></i>
+        </button>
+        <button id="viewBorrowedBooksBtn" title="View Borrowed Books">
+            <i class="fa fa-list"></i>
+        </button>
+        <button id="assignAuthorBtn" title="Assign Author">
+            <i class="fa fa-user-tag"></i>
+        </button>
+        <button id="viewAssignedAuthorBookBtn" title="View Author-Book">
+            <i class="fa fa-link"></i>
+        </button>
+        <button id="logoutBtn" title="Logout">
+            <i class="fa fa-sign-out-alt"></i>
+        </button>
+    </div>
+</header>
+
+    <div class="overlay"></div>
+    <div class="container">
+        <h1><i class="fas fa-book-open"></i>
+            Borrow a Book</h1>
+        <form id="borrowBookForm">
+            <div class="form-section">
+                <label for="bookDropdown">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book"><path d="M6 2h12v20H6z"></path></svg>
+                    Select a Book:
+                </label>
+                <select id="bookDropdown" required>
+                    <option value="">-- Select a Book --</option>
+                </select>
+            </div>
+            <div class="button-container">
+                <button type="submit" class="submit-btn">Borrow Book</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1/solar_library/public'; 
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = `expires=${date.toUTCString()}`;
+            document.cookie = `${name}=${value}; ${expires}; path=/`;
+        }
+
+        
+        let token = getCookie('token');
+        if (!token) {
+            alert('You must be logged in to access this page');
+            window.location.href = 'signin.html'; 
+        }
+
+        function fetchAvailableBooks() {
+            fetch(`${BASE_URL}/books/available`, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch books');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    populateBookDropdown(data.books);
+
+                   
+                    if (data.new_token) {
+                        token = data.new_token; 
+                        setCookie('token', token, 1); 
+                    }
+
+                } else {
+                    alert('Failed to retrieve book list');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while fetching the book list.');
+            });
+        }
+
+        function populateBookDropdown(books) {
+            const dropdown = document.getElementById('bookDropdown');
+            books.forEach(book => {
+                const option = document.createElement('option');
+                option.value = book.bookid; 
+                option.textContent = `Title: ${book.title} - Genre: (${book.genre})`;
+                dropdown.appendChild(option);
+            });
+        }
+
+        fetchAvailableBooks();
+
+        document.getElementById('borrowBookForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+        
+            const selectedBookId = document.getElementById('bookDropdown').value;
+            if (!selectedBookId) {
+                alert('Please select a book to borrow');
+                return;
+            }
+
+            const bookData = { bookid: selectedBookId };
+
+            fetch(`${BASE_URL}/book/borrow`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}` 
+                },
+                body: JSON.stringify(bookData)
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    alert('Unauthorized! Please log in again.');
+                    window.location.href = 'signin.html';
+                    throw new Error('Unauthorized');
+                } else if (response.status === 404) {
+                    alert('Book not found!');
+                    throw new Error('Book not found');
+                } else if (response.status === 400) {
+                    alert('Book is currently not available.');
+                    throw new Error('Book unavailable');
+                } else if (!response.ok) {
+                    throw new Error('An error occurred.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(`Book borrowed successfully! Due date: ${data.data.due_date}`);
+                    
+                    if (data.new_token) {
+                        token = data.new_token; 
+                        setCookie('token', token, 1); 
+                    }
+
+                    document.getElementById('borrowBookForm').reset();
+                } else {
+                    alert(data.message || 'Failed to borrow book!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while borrowing the book. Please check the console for more details.');
+            });
+        });
+
+        document.getElementById('addBookBtn').addEventListener('click', function () {
+            window.location.href = 'add-book.html';
+        });
+
+        document.getElementById('viewBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-book.html';
+        });
+
+        document.getElementById('addAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'add-author.html';
+        });
+
+        document.getElementById('viewAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'view-author.html';
+        });
+
+        document.getElementById('borrowBookBtn').addEventListener('click', function () {
+            window.location.href = 'borrow-book.html';
+        });
+
+        document.getElementById('viewBorrowedBooksBtn').addEventListener('click', function () {
+            window.location.href = 'view-borrowed.html';
+        });
+
+        document.getElementById('assignAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'assign-author.html';
+        });
+
+        document.getElementById('viewAssignedAuthorBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-authorbook.html';
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            document.cookie = 'token=; Max-Age=0; path=/'; 
+            alert('You have been logged out.');
+            window.location.href = 'index.html';
+        });
+    </script>
+
+</body>
+</html>

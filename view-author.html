@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Authors</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+ 
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('images/bg_books.jpg') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); 
+            z-index: -1;
+        }
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    z-index: 100;
+}
+
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header-logo h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffc107;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-buttons button {
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease, text-decoration 0.3s ease;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+.nav-buttons button:hover {
+    transform: scale(1.1);
+    color: #ffc107;
+}
+
+.nav-buttons button::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;  
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #fff;
+    visibility: hidden;
+}
+
+.nav-buttons button:hover::after {
+    visibility: visible;
+}
+
+
+.nav-buttons i {
+    font-size: 20px;
+}
+
+
+.nav-buttons button i {
+    opacity: 0.8;
+}
+
+.nav-buttons button:hover i {
+    opacity: 1;
+}
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 100px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 600;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin: 10px 0;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2d3748;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        td {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover td {
+            background-color: #f2f2f2;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .action-btns button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-btns button.edit {
+            background-color: #28a745;
+        }
+
+        .action-btns button.delete {
+            background-color: #dc3545;
+        }
+
+        .action-btns button:hover {
+            transform: scale(1.05);
+        }
+
+        .action-btns button.edit:hover {
+            background-color: #218838;
+        }
+
+        .action-btns button.delete:hover {
+            background-color: #c82333;
+        }
+
+        .table-container {
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+
+<header class="header">
+    <div class="header-logo">
+        <img src="images/swlogo.png" alt="ShelfWise Logo">
+        <h2>ShelfWise!</h2>
+    </div>
+    <div class="nav-buttons">
+        <button id="addBookBtn" title="Add Book">
+            <i class="fa fa-plus"></i>
+        </button>
+        <button id="viewBookBtn" title="View Books">
+            <i class="fa fa-book"></i>
+        </button>
+        <button id="addAuthorBtn" title="Add Author">
+            <i class="fa fa-user-plus"></i>
+        </button>
+        <button id="viewAuthorBtn" title="View Authors">
+            <i class="fa fa-users"></i>
+        </button>
+        <button id="borrowBookBtn" title="Borrow Book">
+            <i class="fa fa-book-reader"></i>
+        </button>
+        <button id="viewBorrowedBooksBtn" title="View Borrowed Books">
+            <i class="fa fa-list"></i>
+        </button>
+        <button id="assignAuthorBtn" title="Assign Author">
+            <i class="fa fa-user-tag"></i>
+        </button>
+        <button id="viewAssignedAuthorBookBtn" title="View Author-Book">
+            <i class="fa fa-link"></i>
+        </button>
+        <button id="logoutBtn" title="Logout">
+            <i class="fa fa-sign-out-alt"></i>
+        </button>
+    </div>
+</header>
+
+
+    <div class="overlay"></div>
+    <div class="container">
+        <h1><i class="fas fa-user"></i> Authors List</h1>
+
+<div id="totalBooksContainer" style="
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #ffc107;
+    font-size: 18px;
+    font-weight: bold;
+    max-width: 200px;
+    margin-bottom: 20px;
+">
+    <span id="totalAuthors">Authors: 0</span> 
+</div>
+        <!-- Table Layout -->
+        <div class="table-container">
+            <table id="authorTable">
+                <thead>
+                    <tr>
+                        <th>Author ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Biography</th>
+                        <th>Nationality</th>
+                        <th>Books Published</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Author data will be injected here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1/solar_library/public'; 
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        const token = getCookie('token');
+        if (!token) {
+            alert('You must be logged in to access this page');
+            window.location.href = 'signin.html';  
+        }
+
+        fetch(`${BASE_URL}/authors`, {
+    method: 'GET',
+    headers: {
+        'Authorization': `Token ${token}`
+    }
+})
+.then(response => response.json())
+.then(data => {
+    if (data.status === 'success' && data.new_token) {
+        document.cookie = `token=${data.new_token}; path=/`; 
+    }
+
+    if (data.status === 'success' && Array.isArray(data.data)) {
+        const authorTable = document.getElementById('authorTable').getElementsByTagName('tbody')[0];
+
+        data.data.forEach(author => {
+            const row = authorTable.insertRow();
+
+            row.dataset.authorid = author.authorid; 
+            row.innerHTML = `
+                        <td>${author.authorid}</td>
+                        <td>${author.name}</td>
+                        <td>${author.age}</td>
+                        <td>${author.biography}</td>
+                        <td>${author.nationality}</td>
+                        <td>${author.numbooks_pub}</td>
+                        <td class="action-btns">
+                            <button class="edit" onclick="editAuthor(${author.authorid})"><i class="fas fa-edit"></i></button>
+                            <button class="delete" onclick="deleteAuthor(${author.authorid})"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                });
+    } else {
+        alert('No authors found!');
+        alert('Unauthorized. Please login again.');
+        window.location.href = 'signin.html';  
+    }
+})
+.catch(error => {
+    console.error('Error fetching authors:', error);
+    alert('An error occurred while fetching authors.');
+});
+
+
+        function editAuthor(authorid) {
+            const row = document.querySelector(`tr[data-authorid="${authorid}"]`);
+            const cells = row.getElementsByTagName('td');
+
+            for (let i = 1; i < cells.length - 1; i++) {
+                const cell = cells[i];
+                const text = cell.innerText;
+                cell.innerHTML = `<input type="text" value="${text}" />`;
+            }
+
+            const actionBtns = row.querySelector('.action-btns');
+            actionBtns.innerHTML = `<button class="save" onclick="saveChanges(${authorid})">Save Changes</button>`;
+        }
+
+        function saveChanges(authorid) {
+    const row = document.querySelector(`tr[data-authorid="${authorid}"]`);
+    const cells = row.getElementsByTagName('td');
+    const updatedAuthor = {
+        authorid: authorid,
+        name: cells[1].querySelector('input').value,
+        age: cells[2].querySelector('input').value,
+       biography: cells[3].querySelector('input').value,
+        nationality: cells[4].querySelector('input').value,
+        numbooks_pub: cells[5].querySelector('input').value,
+    };
+
+    const token = getCookie('token');  
+    console.log('Token:', token);  
+
+    if (!token) {
+        alert('You are not logged in!');
+        window.location.href = 'login.html';  
+        return;
+    }
+
+    fetch(`${BASE_URL}/author/edit`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`  
+        },
+        body: JSON.stringify(updatedAuthor)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success' && data.new_token) {
+            document.cookie = `token=${data.new_token}; path=/`; 
+        }
+
+        if (data.status === 'success') {
+            alert('Author information updated successfully!');
+            window.location.reload();  
+        } else {
+            alert('Failed to update author.');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating book:', error);
+        alert('An error occurred while updating the author.');
+    });
+}
+
+
+
+function deleteAuthor(authorid) {
+    if (confirm(`Are you sure you want to delete author with ID: ${authorid}?`)) {
+        const token = getCookie('token');  
+
+        console.log('Token:', token);
+
+        if (!token) {
+            alert('You must be logged in to delete an author');
+            window.location.href = 'login.html';  
+            return;
+        }
+
+        fetch(`${BASE_URL}/author/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}` 
+            },
+            body: JSON.stringify({ authorid: authorid }) 
+        })
+        .then(response => {
+            console.log('Response status:', response.status);  
+            if (response.status === 401) {
+                alert('Unauthorized. Please login again.');
+                window.location.href = 'login.html';  
+                throw new Error('Unauthorized access');
+            }
+            if (!response.ok) {
+                throw new Error('Failed to delete author');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success' && data.new_token) {
+                document.cookie = `token=${data.new_token}; path=/`;
+            }
+
+            if (data.status === 'success') {
+                alert('Author deleted successfully!');
+                window.location.reload(); 
+            } else {
+                alert('Failed to delete author!');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting author:', error);
+            alert('An error occurred while deleting the author.');
+        });
+    }
+}
+
+        document.getElementById('addBookBtn').addEventListener('click', function () {
+            window.location.href = 'add-book.html';
+        });
+
+        document.getElementById('viewBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-book.html';
+        });
+
+        document.getElementById('addAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'add-author.html';
+        });
+
+        document.getElementById('viewAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'view-author.html';
+        });
+
+        document.getElementById('borrowBookBtn').addEventListener('click', function () {
+            window.location.href = 'borrow-book.html';
+        });
+
+        document.getElementById('viewBorrowedBooksBtn').addEventListener('click', function () {
+            window.location.href = 'view-borrowed.html';
+        });
+
+        document.getElementById('assignAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'assign-author.html';
+        });
+
+        document.getElementById('viewAssignedAuthorBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-authorbook.html';
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            document.cookie = 'token=; Max-Age=0; path=/'; 
+            alert('You have been logged out.');
+            window.location.href = 'index.html'; 
+        });
+
+    function updateTotalAuthors() {
+        const totalBooksElement = document.getElementById('totalAuthors');
+        const bookTableRows = document.querySelectorAll('#authorTable tbody tr');
+        totalBooksElement.textContent = `Authors:    ${bookTableRows.length}`;
+    }
+
+    window.onload = updateTotalAuthors;
+
+    </script>
+
+</body>
+</html>

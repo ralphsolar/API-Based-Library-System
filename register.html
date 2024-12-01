@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - ShelfWise Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('images/bg_books.jpg') no-repeat center center/cover; 
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 50px;
+        }
+        .left-side {
+            flex: 1;
+            text-align: left;
+            padding-right: 50px;
+        }
+        .right-side {
+            flex: 1;
+            text-align: right;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 36px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .logo img {
+            max-width: 100px;
+            margin-right: 15px;
+        }
+
+        h2 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        input {
+            padding: 12px 18px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        button {
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            background-color: #007BFF;
+            color: #fff;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffd700; 
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        .button i {
+            margin-right: 10px;
+        }
+
+        .signin-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .signin-link {
+            font-size: 16px;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .signin-link span {
+            font-weight: normal; 
+        }
+
+        .signin-link:hover span {
+            font-weight: bold; 
+            color: #ffd700; 
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .left-side {
+                padding-right: 0;
+                margin-bottom: 30px;
+            }
+            .right-side {
+                text-align: center;
+            }
+            form {
+                width: 80%;
+                margin: 0 auto;
+            }
+            input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="overlay"></div> 
+
+<div class="container">
+    <div class="left-side">
+        <div class="logo">
+            <img src="images/swlogo.png" alt="ShelfWise Logo">
+            ShelfWise!
+        </div>
+        <div class="description">
+            <br>Please create an account to get started.
+        </div>
+    </div>
+
+    <div class="right-side">
+        <h2>Register</h2>
+        <form id="registerForm">
+            <label for="username"><i class="fas fa-user"></i> Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password"><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit" class="button register"><i class="fas fa-user-plus"></i> Register</button>
+        </form>
+        <div class="signin-container">
+            <a href="signin.html" class="signin-link">Already have an account? <span>Sign in</span></a>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        fetch('http://127.0.0.1/solar_library/public/user/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('Registration successful! You can now log in.');
+                window.location.href = 'signin.html'; 
+            } else {
+                alert('Registration failed: ' + data.data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred: ' + error.message);
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Borrowed Books</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('images/bg_books.jpg') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 15px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    z-index: 100;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.header-logo img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.header-logo h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffc107;
+}
+
+
+.nav-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-buttons button {
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.3s ease, text-decoration 0.3s ease;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.nav-buttons button:hover {
+    transform: scale(1.1);
+    color: #ffc107;
+}
+.nav-buttons button::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;  
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #fff;
+    visibility: hidden;
+}
+
+.nav-buttons button:hover::after {
+    visibility: visible;
+}
+
+.nav-buttons i {
+    font-size: 20px;
+}
+
+.nav-buttons button i {
+    opacity: 0.8;
+}
+
+.nav-buttons button:hover i {
+    opacity: 1;
+}
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 100px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 600;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            margin: 10px 0;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px 15px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2d3748;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        td {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f1f1f1; 
+        }
+
+        tr:hover td {
+            background-color: #f2f2f2;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .action-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .action-btns button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-btns button.edit {
+            background-color: #28a745;
+        }
+
+        .action-btns button.delete {
+            background-color: #dc3545;
+        }
+
+        .action-btns button:hover {
+            transform: scale(1.05);
+        }
+
+        .action-btns button.edit:hover {
+            background-color: #218838;
+        }
+
+        .action-btns button.delete:hover {
+            background-color: #c82333;
+        }
+        .table-container {
+            width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .no-records {
+            font-size: 18px;
+            color: #ff0000;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="header-logo">
+        <img src="images/swlogo.png" alt="ShelfWise Logo"> 
+        <h2>ShelfWise!</h2>
+    </div>
+    <div class="nav-buttons">
+        <button id="addBookBtn" title="Add Book">
+            <i class="fa fa-plus"></i>
+        </button>
+        <button id="viewBookBtn" title="View Books">
+            <i class="fa fa-book"></i>
+        </button>
+        <button id="addAuthorBtn" title="Add Author">
+            <i class="fa fa-user-plus"></i>
+        </button>
+        <button id="viewAuthorBtn" title="View Authors">
+            <i class="fa fa-users"></i>
+        </button>
+        <button id="borrowBookBtn" title="Borrow Book">
+            <i class="fa fa-book-reader"></i>
+        </button>
+        <button id="viewBorrowedBooksBtn" title="View Borrowed Books">
+            <i class="fa fa-list"></i>
+        </button>
+        <button id="assignAuthorBtn" title="Assign Author">
+            <i class="fa fa-user-tag"></i>
+        </button>
+        <button id="viewAssignedAuthorBookBtn" title="View Author-Book">
+            <i class="fa fa-link"></i>
+        </button>
+        <button id="logoutBtn" title="Logout">
+            <i class="fa fa-sign-out-alt"></i>
+        </button>
+    </div>
+</header>
+
+    <div class="overlay"></div>
+    <div class="container">
+        <h1><i class="fas fa-list-alt"></i> Borrowed Books List</h1>
+
+
+<div id="totalBooksContainer" style="
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #ffc107;
+    font-size: 18px;
+    font-weight: bold;
+    max-width: 200px;
+    margin-bottom: 20px;
+">
+    <span id="totalBooksBorrowed">Borrowed: 0</span> 
+</div>
+
+        <!-- Table Layout -->
+        <div class="table-container">
+            <table id="borrowedBookTable">
+                <thead>
+                    <tr>
+                        <th>Book ID</th>
+                        <th>Title</th>
+                        <th>Genre</th>
+                        <th>Description</th>
+                        <th>Publication Year</th>
+                        <th>Publisher</th>
+                        <th>Language</th>
+                        <th>Number of Pages</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Borrowed books data will be injected here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div id="noRecordsMessage" class="no-records" style="display: none;">
+            No borrowed books.
+        </div>
+
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1/solar_library/public';
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        const token = getCookie('token');
+        if (!token) {
+            alert('You must be logged in to access this page');
+            window.location.href = 'signin.html';  
+        }
+
+        fetch(`${BASE_URL}/user/borrowed`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.new_token) {
+                document.cookie = `token=${data.new_token}; path=/`;
+            }
+
+            const borrowedBooks = data.data;
+            const borrowedBookTable = document.getElementById('borrowedBookTable').getElementsByTagName('tbody')[0];
+            const noRecordsMessage = document.getElementById('noRecordsMessage');
+
+            if (Array.isArray(borrowedBooks) && borrowedBooks.length === 0) {
+                noRecordsMessage.style.display = 'block';
+            } else {
+                noRecordsMessage.style.display = 'none';
+
+                borrowedBooks.forEach(book => {
+                    const row = borrowedBookTable.insertRow();
+
+                    const dueDate = new Date(book.due_date);
+                    const formattedDueDate = dueDate.toLocaleString();  
+
+                    row.innerHTML = `
+                        <td>${book.bookid}</td>
+                        <td>${book.title}</td>
+                        <td>${book.genre}</td>
+                        <td>${book.description}</td>
+                        <td>${book.pub_yr}</td>
+                        <td>${book.publisher}</td>
+                        <td>${book.language}</td>
+                        <td>${book.num_page}</td>
+                        <td>${book.borrow_date}</td>
+                        <td>${formattedDueDate}</td>
+                        <td><button onclick="returnBook(${book.bookid})">Return</button></td>
+                    `;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching borrowed books:', error);
+            alert('An error occurred while fetching borrowed books.');
+            alert('Unauthorized. Please login again.');
+            window.location.href = 'signin.html';
+        });
+
+        function returnBook(bookid) {
+            const token = getCookie('token');
+            if (!token) {
+                alert('You must be logged in to return a book');
+                 window.location.href = 'signin.html';
+                return;
+            }
+
+            fetch(`${BASE_URL}/book/return`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ bookid })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Book returned successfully!');
+                    location.reload();
+                } else {
+                    alert('Failed to return the book: ' + data.data.message);
+                }
+
+                if (data.new_token) {
+                    document.cookie = `token=${data.new_token}; path=/`;
+                }
+            })
+            .catch(error => {
+                console.error('Error returning book:', error);
+                alert('An error occurred while returning the book.');
+            });
+        }
+
+        document.getElementById('addBookBtn').addEventListener('click', function () {
+            window.location.href = 'add-book.html';
+        });
+
+        document.getElementById('viewBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-book.html';
+        });
+
+        document.getElementById('addAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'add-author.html';
+        });
+
+        document.getElementById('viewAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'view-author.html';
+        });
+
+        document.getElementById('borrowBookBtn').addEventListener('click', function () {
+            window.location.href = 'borrow-book.html';
+        });
+
+        document.getElementById('viewBorrowedBooksBtn').addEventListener('click', function () {
+            window.location.href = 'view-borrowed.html';
+        });
+
+        document.getElementById('assignAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'assign-author.html';
+        });
+
+        document.getElementById('viewAssignedAuthorBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-authorbook.html';
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            document.cookie = 'token=; Max-Age=0; path=/'; 
+            alert('You have been logged out.');
+            window.location.href = 'index.html';
+        });
+
+
+    function updateTotalBooksBorrowed() {
+        const totalBooksElement = document.getElementById('totalBooksBorrowed');
+        const bookTableRows = document.querySelectorAll('#borrowedBookTable tbody tr');
+        totalBooksElement.textContent = `Borrowed:    ${bookTableRows.length}`;
+    }
+
+   
+    window.onload = updateTotalBooksBorrowed;
+    </script>
+
+</body>
+</html>

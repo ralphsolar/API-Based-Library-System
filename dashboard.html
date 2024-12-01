@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ShelfWise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('images/bg_books.jpg') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15); 
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+            width: 90%; 
+            max-width: 800px;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            width: 100px; 
+            height: auto;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            margin-top: 10px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent; 
+    color: #fff; 
+    border: 2px solid #fff; 
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    position: relative;
+}
+
+.button:hover {
+    background: rgba(255, 193, 7, 0.8); 
+    color: #000; 
+    border-color: #fff; 
+    transform: translateY(-5px); 
+}
+
+.button i {
+    font-size: 24px; 
+    color: inherit; 
+}
+
+.logout-btn {
+    background: transparent;
+    border-color: #fff;
+    color: #fff; 
+}
+
+.logout-btn:hover {
+    background: rgba(220, 53, 69, 0.8); 
+    color: #fff; 
+    transform: translateY(-5px); 
+}
+
+@media (max-width: 768px) {
+    .button-container {
+        grid-template-columns: repeat(2, 1fr); 
+    }
+
+    .button {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    .button i {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .button-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@keyframes typewriter {
+    0% {
+        width: 0;
+    }
+    50% {
+        width: 100%;
+    }
+    100% {
+        width: 0;
+    }
+}
+.logo p {
+    font-size: 14px; 
+    font-weight: 400;
+    color: #fff; 
+    overflow: hidden; 
+    border-right: 3px solid #fff; 
+    white-space: nowrap; 
+    animation: typewriter 7s steps(30) infinite, blink 1s step-end infinite; 
+}
+@keyframes blink {
+    50% {
+        border-color: transparent; 
+    }
+}
+    </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="logo">
+            <img src="images/swlogo.png" alt="ShelfWise Logo"> 
+            <h1>ShelfWise!</h1>
+            <p>A Smart Space for Every Books!</p>
+        </div>
+        <div class="button-container">
+            <button class="button" id="addBookBtn">
+                <i class="fas fa-book"></i> Add Book
+            </button>
+            <button class="button" id="viewBookBtn">
+                <i class="fas fa-book-reader"></i> View Book
+            </button>
+            <button class="button" id="addAuthorBtn">
+                <i class="fas fa-user-plus"></i> Add Author
+            </button>
+            <button class="button" id="viewAuthorBtn">
+                <i class="fas fa-users"></i> View Author
+            </button>
+            <button class="button" id="borrowBookBtn">
+                <i class="fas fa-hand-holding"></i> Borrow Book
+            </button>            
+            <button class="button" id="viewBorrowedBooksBtn">
+                <i class="fas fa-book-open"></i> View Borrowed Books
+            </button>
+            <button class="button" id="assignAuthorBtn">
+                <i class="fas fa-user-edit"></i> Assign Author to a Book
+            </button>
+            <button class="button" id="viewAssignedAuthorBookBtn">
+                <i class="fas fa-list-alt"></i> View Assigned Author-Book
+            </button>
+            <button class="button logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://127.0.0.1/solar_library/public'; 
+
+        const token = document.cookie.split('; ').find(row => row.startsWith('token='));
+
+        if (!token) {
+            alert('You need to log in first.');
+            window.location.href = 'signin.html'; 
+        }
+
+        document.getElementById('addBookBtn').addEventListener('click', function () {
+            window.location.href = 'add-book.html'; 
+        });
+
+        document.getElementById('viewBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-book.html'; 
+        });
+
+        document.getElementById('addAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'add-author.html'; 
+        });
+
+        document.getElementById('viewAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'view-author.html';
+        });
+
+        document.getElementById('borrowBookBtn').addEventListener('click', function () {
+            window.location.href = 'borrow-book.html'; 
+        });
+
+        document.getElementById('viewBorrowedBooksBtn').addEventListener('click', function () {
+            window.location.href = 'view-borrowed.html'; 
+        });
+
+        document.getElementById('assignAuthorBtn').addEventListener('click', function () {
+            window.location.href = 'assign-author.html'; 
+        });
+
+        document.getElementById('viewAssignedAuthorBookBtn').addEventListener('click', function () {
+            window.location.href = 'view-authorbook.html'; 
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function () {
+            document.cookie = 'token=; Max-Age=0; path=/'; 
+            alert('You have been logged out.');
+            window.location.href = 'index.html'; 
+        });
+    </script>
+</body>
+</html>

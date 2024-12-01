@@ -1,4 +1,8 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
+
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use Firebase\JWT\JWT;
@@ -386,6 +390,58 @@ $app->get('/book/author/view', function (Request $request, Response $response, a
 
     return $response;
 })->add($jwtMiddleware);
+
+// GET /book/{bookid} - Get a single book by its ID with JWT authentication and token rotation
+$app->get('/book/{bookid}', function (Request $request, Response $response, $args) use ($secretKey) {
+    $bookid = $args['bookid']; // Get the book ID from the URL
+    
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "library";
+
+    try {
+        // Establish database connection
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        // Prepare the SQL query to fetch the book with the given bookid
+        $sql = "SELECT * FROM books WHERE bookid = :bookid";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':bookid', $bookid, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Fetch the book data
+        $book = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Check if the book exists
+        if ($book) {
+            // Generate a new token for the logged-in user
+            $jwt = generateToken($request->getAttribute('jwt')->data, $secretKey);
+
+            // Return the book details and the new token
+            $response->getBody()->write(json_encode(array(
+                "status" => "success",
+                "new_token" => $jwt, // Return the new token
+                "data" => $book // Return the book details
+            ), JSON_PRETTY_PRINT));
+
+            return $response;
+        } else {
+            // If the book is not found, return a 404 response
+            return $response->withJson(array(
+                "status" => "fail",
+                "message" => "Book not found"
+            ), 404); // HTTP 404 Not Found
+        }
+    } catch (PDOException $e) {
+        // If there is a database error, return a 500 response with the error message
+        return $response->withJson(array(
+            "status" => "fail",
+            "message" => "Database error: " . $e->getMessage()
+        ), 500); // HTTP 500 Internal Server Error
+    }
+})->add($jwtMiddleware); // Apply JWT middleware for token validation
 
 
 $app->post('/book/author/add', function (Request $request, Response $response, array $args) use ($secretKey) {
@@ -806,6 +862,53 @@ $app->post('/book/borrow', function (Request $request, Response $response, array
         ], 500);
     }
 })->add($jwtMiddleware);
+
+
+$app->get('/books/available', function (Request $request, Response $response) use ($secretKey) {
+    // Retrieve user information from JWT
+    $jwtData = $request->getAttribute('jwt')->data;
+
+    // Ensure 'userid' exists in JWT data
+    if (!isset($jwtData->userid)) {
+        return respondWithJson($response, [
+            "status" => "fail",
+            "data" => ["message" => "User ID not found in token."]
+        ], 400);
+    }
+
+    $userid = $jwtData->userid;
+
+    // Fetch available books from the database
+    $servername = "localhost";
+    $username_db = "root";
+    $password_db = "";
+    $dbname = "library";
+
+    try {
+        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username_db, $password_db);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $booksQuery = "SELECT bookid, title, genre FROM books WHERE is_available = 1";
+        $stmt = $conn->query($booksQuery);
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Generate a new token for the user
+        $jwt = generateToken($jwtData, $secretKey);
+
+        return respondWithJson($response, [
+            "status" => "success",
+            "new_token" => $jwt,
+            "books" => $books
+        ]);
+    } catch (PDOException $e) {
+        return respondWithJson($response, [
+            "status" => "fail",
+            "data" => ["message" => "An error occurred while fetching available books."]
+        ], 500);
+    }
+})->add($jwtMiddleware);
+
+
 
 // View borrowed books (uses token and rotates it)
 $app->get('/user/borrowed', function (Request $request, Response $response, array $args) use ($secretKey) {
